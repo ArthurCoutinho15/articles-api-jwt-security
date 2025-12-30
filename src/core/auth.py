@@ -11,7 +11,7 @@ from pydantic import EmailStr
 
 from jose import jwt
 
-from secao06.src.models.__usuario_model import UsuarioModel
+from models.__usuario_model import UsuarioModel
 from core.configs import settings
 from core.security import security
 

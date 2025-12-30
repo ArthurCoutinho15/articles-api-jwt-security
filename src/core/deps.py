@@ -12,7 +12,7 @@ from core.database import Session
 from core.auth import oauth2_schema
 from core.configs import settings
 
-from secao06.src.models.__usuario_model import UsuarioModel
+from models.__usuario_model import UsuarioModel
 
 class TokenData(BaseModel):
     username: Optional[str] = None
