@@ -19,7 +19,7 @@ async def post_artigo(artigo: ArtigoSchema, usuario_logado: UsuarioModel = Depen
         titulo=artigo.titulo,
         descricao=artigo.descricao,
         url_fonte=artigo.url_fonte,
-        usuario_id=artigo.usuario_logado.id
+        usuario_id=usuario_logado.id
     )
     
     db.add(novo_artigo)
@@ -38,7 +38,7 @@ async def get_artigos(db: AsyncSession = Depends(get_session)):
         
         return artigos
     
-@router.get('/{id_artigo}', response_model=ArtigoSchema)
+@router.get('/{artigo_id}', response_model=ArtigoSchema)
 async def get_artigo(artigo_id: int, db: AsyncSession = Depends(get_session)):
     async with db as session:
         query = select(ArtigoModel).filter(ArtigoModel.id == artigo_id)
@@ -51,7 +51,7 @@ async def get_artigo(artigo_id: int, db: AsyncSession = Depends(get_session)):
         else: 
             raise HTTPException(detail="Artigo não encotrado.", status_code=status.HTTP_404_NOT_FOUND)
         
-@router.put('/{id_artigo}', response_model=ArtigoSchema, status_code=status.HTTP_202_ACCEPTED)
+@router.put('/{artigo_id}', response_model=ArtigoSchema, status_code=status.HTTP_202_ACCEPTED)
 async def put_artigo(artigo_id: int, artigo: ArtigoSchema, db: AsyncSession = Depends(get_session), usuario_logado: UsuarioModel = Depends(get_current_user)):
     async with db as session:
         query = select(ArtigoModel).filter(ArtigoModel.id == artigo_id).filter(ArtigoModel.usuario_id == usuario_logado.id)

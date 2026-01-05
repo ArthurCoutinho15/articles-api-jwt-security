@@ -40,7 +40,7 @@ async def post_signup(usuario: UsuarioSchemaCreate, db: AsyncSession = Depends(g
         except IntegrityError:
             raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail="Email já vinculado a um usuário cadastrado.")
     
-@router.get('/usuarios', response_model=List[UsuarioSchemaBase])
+@router.get('', response_model=List[UsuarioSchemaBase])
 async def get_usuarios(db: AsyncSession = Depends(get_session)):
     async with db as session:
         query = select(UsuarioModel)
@@ -49,12 +49,12 @@ async def get_usuarios(db: AsyncSession = Depends(get_session)):
         
         return usuarios
         
-@router.get('/usuarios/{usuario_id}', response_model=UsuarioSchemaArtigos)
+@router.get('/{usuario_id}', response_model=UsuarioSchemaArtigos)
 async def get_usuario(usuario_id: int, db: AsyncSession = Depends(get_session)):
     async with db as session:
         query = select(UsuarioModel).filter(UsuarioModel.id == usuario_id)
         result = await session.execute(query)
-        usuario: UsuarioSchemaArtigos = result.scalars().unique().all()
+        usuario: UsuarioSchemaArtigos = result.scalars().unique().one_or_none()
         
         if usuario:
             return usuario
@@ -71,7 +71,7 @@ async def put_usuario(
         result = await session.execute(
             select(UsuarioModel).filter(UsuarioModel.id == usuario_id)
         )
-        usuario_db = result.scalars().one_or_none()
+        usuario_db = result.scalars().unique().one_or_none()
 
         if not usuario_db:
             raise HTTPException(status_code=404, detail="Usuário não encontrado")
@@ -98,7 +98,7 @@ async def delete_usuario(usuario_id: int, db: AsyncSession = Depends(get_session
         result = await session.execute(
             select(UsuarioModel).filter(UsuarioModel.id == usuario_id)
         )
-        usuario = result.scalars().one_or_none()
+        usuario = result.scalars().unique().one_or_none()
 
         if not usuario:
             raise HTTPException(status_code=404, detail="Usuário não encontrado")
